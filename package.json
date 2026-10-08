@@ -1,0 +1,20 @@
+{
+  "name": "the-sixth-friend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "An AI-powered chaotic sixth friend that interrupts your hangout with surreal events.",
+  "type": "module",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "PACE=fast node server/index.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "leo-profanity": "^1.9.0",
+    "qrcode": "^1.5.4",
+    "ws": "^8.22.0"
+  }
+}

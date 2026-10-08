@@ -129,7 +129,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .item img { width: 100%; max-height: 190px; object-fit: contain; border-radius: 10px; background: #0a0614; display: block; margin-top: 4px; }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 @keyframes itemin { from { opacity: 0; transform: translateY(18px) scale(.94) rotate(-1.5deg); } }
-.verdict-text { font-size: clamp(16px, 5vw, 22px); line-height: 1.35; max-width: 500px; text-shadow: 0 0 18px hsla(var(--hue),100%,60%,.5); }
+.verdict-text { font-size: clamp(16px, 5vw, 22px); line-height: 1.35; max-width: 500px; text-shadow: 0 0 14px #000, 0 0 5px #000, 0 0 24px hsla(var(--hue),100%,60%,.5); background: rgba(5,2,13,.35); padding: 10px 14px; border-radius: 14px; }
 
 .comment { max-width: 520px; display: flex; flex-direction: column; gap: 16px; align-items: center; }
 .comment p { margin: 0; font-size: clamp(16px, 5vw, 22px); line-height: 1.35; font-family: var(--display); font-weight: 500; text-shadow: 0 0 20px hsla(var(--hue), 100%, 60%, .6); }
@@ -185,3 +185,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 #toast.show { opacity: 1; transform: translate(-50%, 0); }
 .mini { font-size: 11px; color: var(--dim); text-align: center; line-height: 1.5; }
 @media (prefers-reduced-motion: reduce) { .logo, .enter, .say .line { animation: none; } body.shake #app { animation: none; } }
+.card .btn { width: 100%; display: block; }
+.card .btn.sm { width: auto; justify-self: center; }
+.sheet > *, .center-col > *, .screen > * { min-width: 0; }
+.sheet { overflow-x: hidden; }

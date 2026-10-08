@@ -3,6 +3,7 @@
 import { PRIMS, rank } from './primitives.js';
 import { fill } from './host.js';
 import { shuffle } from './content.js';
+import { INTERACTIVE } from './schema.js';
 
 const SLOT_RE = /\{\{([a-z_0-9]+)\}\}/g;
 // Slots whose content depends on earlier results can't be prefetched at event start.
@@ -108,6 +109,7 @@ export class EventRun {
         responded: new Set(), targets: this.targetsFor(def.who), startedAt: 0, endsAt: 0,
         world: def.world || this.ev.world, line: null, fx: null,
       };
+      if (INTERACTIVE.has(def.t) && !cur.targets.length) continue; // nobody to ask (e.g. everyone dropped)
       let duration;
       try {
         duration = await prim.begin(this, cur);

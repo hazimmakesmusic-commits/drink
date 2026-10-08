@@ -1,0 +1,11 @@
+{
+  "name": "The Sixth Friend",
+  "short_name": "Sixth Friend",
+  "description": "An AI sixth friend that interrupts your hangout with surreal events.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#05020d",
+  "theme_color": "#05020d",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

@@ -67,7 +67,7 @@ export function Join(root, S, A) {
 /** Shared settings editor used by Setup (create) and the in-session control sheet. */
 export function settingsEditor(S, settings, onChange, { lobby = false } = {}) {
   const cfg = S.config;
-  const box = h('div', { style: { display: 'grid', gap: '16px' } });
+  const box = h('div', { style: { display: 'grid', gap: '16px', gridTemplateColumns: 'minmax(0, 1fr)' } });
   const rebuild = () => {
     clear(box);
     box.append(

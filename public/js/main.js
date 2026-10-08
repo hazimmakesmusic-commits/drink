@@ -62,6 +62,7 @@ function applyAmbience(prev) {
   world.setWorld(w);
   world.setHue(hue);
   world.setIntensity(st.settings.intensity);
+  world.setLowPower(st.phase === 'ambient' || st.phase === 'lobby');
   root.style.setProperty('--hue', Math.round(hue));
   const fx = st.stage?.fx;
   if (fx && fx.id !== lastFx) { lastFx = fx.id; world.fx(fx.kind); (sfx[fx.kind] || sfx.blip)(); if (['alert', 'explode', 'glitch'].includes(fx.kind)) vibrate(fx.kind === 'explode' ? [120, 40, 240] : [80, 40, 80]); }

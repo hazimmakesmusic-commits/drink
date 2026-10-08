@@ -19,6 +19,9 @@ export class World {
     this.pointer = { x: 0.5, y: 0.5 };
     this.stars = Array.from({ length: 170 }, () => ({ x: Math.random(), y: Math.random(), z: Math.random(), s: rnd(0.4, 1.6) }));
     this.blobs = Array.from({ length: 7 }, (_, i) => ({ a: Math.random() * TAU, r: rnd(0.25, 0.6), sp: rnd(0.02, 0.07) * (i % 2 ? 1 : -1), hue: rnd(-50, 50), size: rnd(0.35, 0.8) }));
+    this.quality = 0; // 0 = full, 1/2 = cheaper (adaptive: phones that can't keep up render fewer pixels)
+    this.lowPower = false; // ambient moments run at ~30fps to save battery
+    this.frames = 0; this.acc = 0; this.lastDraw = 0;
     this.resize();
     addEventListener('resize', () => this.resize());
     addEventListener('pointermove', (e) => { this.pointer.x = e.clientX / innerWidth; this.pointer.y = e.clientY / innerHeight; });
@@ -28,7 +31,7 @@ export class World {
   }
 
   resize() {
-    const dpr = Math.min(devicePixelRatio || 1, 1.5);
+    const dpr = Math.min(devicePixelRatio || 1, 1.25) * [1, 0.7, 0.5][this.quality];
     this.W = this.c.width = Math.floor(innerWidth * dpr);
     this.H = this.c.height = Math.floor(innerHeight * dpr);
     this.dpr = dpr;
@@ -42,6 +45,7 @@ export class World {
   }
   setHue(h) { this.targetHue = h; }
   setIntensity(i) { this.intensity = i; }
+  setLowPower(v) { this.lowPower = v; }
 
   fx(kind) {
     const f = { kind, t: 0, dur: { explode: 1.6, alert: 1.1, glitch: 0.9, calm: 2.2, scan: 1.6 }[kind] || 1 };
@@ -54,13 +58,23 @@ export class World {
   }
 
   loop(now) {
+    requestAnimationFrame(this.loop);
+    if (this.lowPower && now - this.lastDraw < 30) return;
+    this.lastDraw = now;
     const dt = Math.min(0.05, (now - this.last) / 1000);
     this.last = now;
     this.t += dt;
+    // adaptive quality: sample frame cost, step down fast / step up slowly
+    this.acc += dt; this.frames++;
+    if (this.frames >= 45) {
+      const avg = this.acc / this.frames;
+      const target = this.lowPower ? 0.045 : 0.03;
+      if (avg > target * 1.15 && this.quality < 2) { this.quality++; this.resize(); }
+      this.frames = 0; this.acc = 0;
+    }
     this.hue += (((this.targetHue - this.hue + 540) % 360) - 180) * Math.min(1, dt * 1.4);
     if (this.fade < 1) this.fade = Math.min(1, this.fade + dt / 0.7);
     this.draw(dt);
-    requestAnimationFrame(this.loop);
   }
 
   draw(dt) {

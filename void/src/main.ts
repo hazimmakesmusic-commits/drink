@@ -6,8 +6,12 @@ import { UI, store } from './ui';
 import { damp } from './fx';
 import type { Ctx, Quality, World } from './types';
 import { LiquidDream } from './worlds/liquid';
+import { CosmicJelly } from './worlds/jelly';
 
-const FACTORIES: ((ctx: Ctx) => World)[] = [(c) => new LiquidDream(c)];
+const FACTORIES: ((ctx: Ctx) => World)[] = [
+  (c) => new LiquidDream(c),
+  (c) => new CosmicJelly(c),
+];
 
 function fail(msg: string) {
   document.getElementById('veil')?.classList.add('gone');
@@ -71,8 +75,9 @@ function boot() {
   const ensure = (i: number) => (worlds[i] ??= FACTORIES[i](ctx));
 
   let T = 0; // scaled clock
-  let cur = 0;
-  let active: World = ensure(0);
+  const startIdx = Math.min(FACTORIES.length - 1, Math.max(0, Number(new URLSearchParams(location.search).get('w')) || 0));
+  let cur = startIdx;
+  let active: World = ensure(startIdx);
   scene.add(active.root);
   active.enter();
 
@@ -85,7 +90,7 @@ function boot() {
     onVolume: (v) => { audio.setVolume(v); store('void.vol', String(v)); },
     onCalm: () => setCalm(!calm),
   });
-  ui.setWorld(0, active, false);
+  ui.setWorld(cur, active, false);
   const vol = parseFloat(store('void.vol') ?? '0.6');
   ui.setVolumeValue(vol); audio.setVolume(vol);
   ui.setCalm(calm);
@@ -222,19 +227,22 @@ function boot() {
       revealed = true;
       setTimeout(() => {
         document.getElementById('veil')?.classList.add('gone');
-        ui.setWorld(0, active, true);
+        ui.setWorld(cur, active, true);
         ui.showHint();
       }, 500);
       // warm up the other worlds while the visitor is busy with the first one
-      let k = 1;
+      let k = 0;
       const warm = () => {
         if (k >= FACTORIES.length) return;
         const w = ensure(k++);
-        const tmp = new THREE.Scene();
-        tmp.fog = new THREE.FogExp2(0x000000, 0.01);
-        tmp.add(w.root);
-        try { renderer.compile(tmp, camera); } catch { /* compiled lazily instead */ }
-        tmp.remove(w.root);
+        // never touch a world that is on screen (or mid-transition): only pre-compile idle ones
+        if (!w.root.parent && w !== active && !transition) {
+          const tmp = new THREE.Scene();
+          tmp.fog = new THREE.FogExp2(0x000000, 0.01);
+          tmp.add(w.root);
+          try { renderer.compile(tmp, camera); } catch { /* compiled lazily instead */ }
+          tmp.remove(w.root);
+        }
         setTimeout(warm, 600);
       };
       setTimeout(warm, 2500);
@@ -266,6 +274,8 @@ function boot() {
     get stage() { return stage; },
     get transitioning() { return !!transition; },
     switchTo,
+    get active() { return active; },
+    ctx,
   };
 
   start();

@@ -1,0 +1,12 @@
+# One-click deploy on Render (free plan): New + > Blueprint > pick this repo.
+services:
+  - type: web
+    name: sixth-friend
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/config
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false   # optional: paste a key in the Render dashboard to turn on the LLM host

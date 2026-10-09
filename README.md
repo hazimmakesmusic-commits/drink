@@ -12,7 +12,14 @@ GROUP TALKS → APP IS QUIET → SUDDEN INTERRUPTION → ABSURD EVENT → GROUP 
    → AI COMMENTARY → APP DISAPPEARS → … another one, whenever it feels like it
 ```
 
-## Run it
+## Easiest: put it online (no installs, works on any phone)
+1. Fork/push this repo to GitHub, then on https://render.com choose **New + → Blueprint** and pick the repo
+   (`render.yaml` is already set up; free plan).
+2. When it finishes you get a URL like `https://sixth-friend.onrender.com`. Open it on every phone — no Wi-Fi
+   or firewall fiddling, and the QR code works. (Free plan sleeps when idle; first load takes ~30s.)
+
+## Run it on your own computer
+Double-click `start.bat` (Windows) or `start.command` (Mac), or:
 
 ```bash
 npm install

@@ -7,10 +7,12 @@ import { damp } from './fx';
 import type { Ctx, Quality, World } from './types';
 import { LiquidDream } from './worlds/liquid';
 import { CosmicJelly } from './worlds/jelly';
+import { MeltingDimension } from './worlds/melt';
 
 const FACTORIES: ((ctx: Ctx) => World)[] = [
   (c) => new LiquidDream(c),
   (c) => new CosmicJelly(c),
+  (c) => new MeltingDimension(c),
 ];
 
 function fail(msg: string) {

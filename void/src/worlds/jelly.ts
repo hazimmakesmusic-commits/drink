@@ -81,21 +81,21 @@ void main(){
   canal*=smoothstep(0.12,0.4,vTheta)*(1.0-smoothstep(1.35,1.57,vTheta));
   float wv=exp(-pow((vTheta-uWaveFront)*3.2,2.0))*uWaveAmt;
   float ring=smoothstep(0.93,1.0,0.5+0.5*sin(vTheta*30.0-uTime*0.3))*0.5;
-  vec3 glow=mix(uC0,uC2,0.4)*canal*(0.25+2.3*wv+0.5*uHold)*(1.0-core*0.6);
+  vec3 glow=mix(uC0,uC2,0.4)*canal*(0.25+1.1*wv+0.5*uHold)*(1.0-core*0.6);
   glow+=uC1*ring*0.18*smoothstep(0.4,1.4,vTheta);
   // four-petal gonads glowing inside (only on the mid layer)
   float petal=pow(abs(cos(vPhi*2.5)),3.0)*smoothstep(0.3,0.5,vTheta)*(1.0-smoothstep(0.75,1.0,vTheta));
-  glow+=mix(uC1,uC2,0.5)*petal*inner*(1.0-core)*(0.7+1.4*wv+uHold);
+  glow+=mix(uC1,uC2,0.5)*petal*inner*(1.0-core)*(0.6+0.7*wv+uHold*0.7);
   // heart of light
   float heart=exp(-vTheta*vTheta*2.2);
-  glow+=uC2*heart*core*(0.5+0.8*wv+uHold*1.2);
+  glow+=uC2*heart*core*(0.45+0.4*wv+uHold*0.9);
   // a faint constellation glittering inside the body: slow, soft, never a strobe
   vec2 g=vec2(vPhi*7.0,vTheta*14.0)*vec2(1.0,1.0);
   vec2 gi=floor(g), gf=fract(g)-0.5;
   float hsh=fract(sin(dot(gi,vec2(127.1,311.7)))*43758.5453);
   float star=step(0.93,hsh)*smoothstep(0.22,0.0,length(gf))*(0.5+0.5*sin(uTime*0.5+hsh*60.0));
   glow+=mix(uC2,uC0,hsh)*star*0.9*inner*(1.0-core)*smoothstep(0.1,0.5,vTheta);
-  vec3 rimc=mix(irid,uC2,0.3)*fres*(0.55+0.5*wv)*(1.0-0.55*inner);
+  vec3 rimc=mix(irid,uC2,0.3)*fres*(0.55+0.2*wv)*(1.0-0.55*inner);
   vec3 c=body*alpha*1.2+glow*0.55+rimc*0.5;
   float aa=clamp(alpha+fres*0.15+length(glow)*0.1,0.0,1.0);
   gl_FragColor=vec4(c*uBright,aa*uBright);
@@ -359,7 +359,7 @@ class Jelly {
   contract(strength: number) {
     this.cv += strength;
     this.waveT = 0;
-    this.vel.y += strength * 0.075;
+    this.vel.y += strength * 0.045;
     // swim a touch along the facing direction so it never just bobs in place
     this.vel.x += Math.sin(this.yaw) * strength * 0.012;
     this.vel.z += Math.cos(this.yaw) * strength * 0.012;
@@ -384,7 +384,7 @@ class Jelly {
 
     // body: buoyant swimming
     this.vel.y -= 0.22 * dt;
-    this.vel.addScaledVector(this.tmpV.copy(this.home).sub(this.pos), 0.45 * dt);
+    this.vel.addScaledVector(this.tmpV.copy(this.home).sub(this.pos), 1.1 * dt);
     this.vel.multiplyScalar(Math.exp(-0.85 * dt));
     this.pos.addScaledVector(this.vel, dt);
     this.pos.x += Math.sin(t * 0.21 + this.period) * 0.12 * dt * intensity;
@@ -460,7 +460,7 @@ export class CosmicJelly implements World {
     const q = ctx.quality;
     const seg = Math.round(40 + q.detail * 1.1);
     this.hero = new Jelly(this.shared, { bellSeg: seg, tents: q.tier === 'low' ? 24 : q.tier === 'mid' ? 34 : 46, tentSeg: q.tier === 'low' ? 36 : 56, scale: 1.0, bright: 1.0, seed: 1 });
-    this.hero.home.set(0, 0.45, 0);
+    this.hero.home.set(0, 0.1, 0);
     this.hero.pos.copy(this.hero.home);
     this.hero.onBeat = (s) => { this.ctx.audio.pulse(Math.min(1, s / 7)); };
     this.root.add(this.hero.group);
@@ -524,12 +524,12 @@ export class CosmicJelly implements World {
 
   tap(x: number, y: number) {
     const k = this.ctx.intensity();
-    this.hero.contract(8.5 * (0.7 + 0.3 * k));
+    this.hero.contract(7.5 * (0.7 + 0.3 * k));
     this.pulse = 0.7 * k;
     this.ctx.shock(x, y, 0.7 * k);
     const c = this.hero.pos.clone();
-    this.rings.emit(c.clone().add(new THREE.Vector3(0, -0.2, 0)), 3.4, 2.2, this.shared.uC0.value, this.shared.uTime.value, undefined, 0.035);
-    this.rings.emit(c.clone().add(new THREE.Vector3(0, 0.4, 0)), 2.2, 1.8, this.shared.uC1.value, this.shared.uTime.value - 0.12, undefined, 0.03);
+    this.rings.emit(c.clone().add(new THREE.Vector3(0, -0.2, 0)), 2.6, 2.2, this.shared.uC0.value, this.shared.uTime.value, undefined, 0.035);
+    this.rings.emit(c.clone().add(new THREE.Vector3(0, 0.4, 0)), 1.7, 1.8, this.shared.uC1.value, this.shared.uTime.value - 0.12, undefined, 0.03);
     this.release(c.add(new THREE.Vector3(0, -0.5, 0)), 20, 0.9);
     // a tap away from the creature nudges it away, as if the water were pushed
     const tp = this.worldAt(x, y);

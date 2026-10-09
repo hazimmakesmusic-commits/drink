@@ -270,10 +270,10 @@ export class RingPool {
           void main(){
             float d=length(vUv);
             float r=1.0-pow(1.0-uAge,2.2);
-            float w=uWidth*(0.6+uAge*1.4);
+            float w=uWidth*(0.45+uAge*0.9);
             float ring=exp(-pow((d-r*0.96)/w,2.0));
-            float fade=pow(1.0-uAge,1.6)*smoothstep(1.0,0.85,d);
-            gl_FragColor=vec4(uColor*ring*fade*1.6,ring*fade);
+            float fade=pow(1.0-uAge,2.4)*smoothstep(1.0,0.8,d);
+            gl_FragColor=vec4(uColor*ring*fade*0.85,ring*fade*0.6);
             #include <colorspace_fragment>
           }`,
       });

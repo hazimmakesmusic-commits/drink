@@ -62,7 +62,7 @@ const WarpShader = {
         ab+=strength*0.012;
         dip=smoothstep(0.28,0.5,p)*(1.0-smoothstep(0.5,0.72,p));
         float rr=mix(1.1,0.0,smoothstep(0.1,0.9,p));
-        ringGlow=exp(-pow((r-rr)*5.0,2.0))*strength;
+        ringGlow=exp(-pow((r-rr)*8.0,2.0))*strength;
       }
       uv+=off;
       vec2 dirv=normalize(uv-ctr+1e-5);
@@ -77,7 +77,7 @@ const WarpShader = {
         col/=1.84;
       }
       col*=1.0-dip*0.97;
-      col+=uTint*ringGlow*0.5*(1.0-uCalm*0.5);
+      col+=uTint*ringGlow*0.3*(1.0-uCalm*0.5);
       float v=smoothstep(1.25,0.25,r*(0.95+uVignette*0.25));
       col*=mix(1.0,v,0.85);
       float ign=fract(52.9829189*fract(dot(gl_FragCoord.xy+floor(uTime*24.0)*vec2(13.7,5.3),vec2(0.06711056,0.00583715))));
